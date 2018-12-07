@@ -1,0 +1,36 @@
+# This file specifies the location for which to display weather information as a
+# dictionary with two keys: "lat" and "lon". 
+# "lat" specifies the latitude in degrees; north is positive, south is negative.
+# "lon" specifies the longitude in degrees; east is positive, west is negative.
+
+# Berlin.
+lat: 52.5200
+lon: 13.4050
+
+# London.
+# lat: 51.5074
+# lon: -0.1278
+
+# New York.
+# lat: 40.7128
+# lon: -74.0060
+
+# Paris.
+# lat: 48.8566
+# lon: 2.3522
+
+# Melbourne.
+# lat: -37.8136
+# lon: 144.9631
+
+# Moscow.
+# lat: 55.7558
+# lon: 37.6173
+
+# Beijing.
+# lat: 39.9042
+# lon: 116.4074
+
+# Honolulu.
+# lat: 21.3069
+# lon: 157.8583
