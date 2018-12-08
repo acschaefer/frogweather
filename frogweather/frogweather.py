@@ -282,8 +282,6 @@ if __name__ == '__main__':
     # Set up logging.
     logging.basicConfig(level=logging.INFO)
 
-    import pygame
-
     # Define the size of the weather station window.
     screensize = (240, 480)
 
@@ -292,23 +290,28 @@ if __name__ == '__main__':
     pygame.display.set_caption('Frogweather')
     screen = pygame.display.set_mode(screensize)
 
-    # Define the callback function.
-    def update(image):
-        """Convert PIL image to pygame image and display it on screen.
-        """
-        
-        # Resize the image to fit the output window.
-        image = image.resize(screensize)
+    # Create the weather station.
+    weatherstation = WeatherStation()
 
-        # Convert the PIL image to a pygame image.
-        data = image.tobytes()
-        size = image.size
-        mode = image.mode
-        image = pygame.image.fromstring(data, size, mode)
+    # Start the game main loop.
+    while True:
+        # Process game events.
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                sys.exit()
 
-        # Load the pygame image into the output window and refresh it.
-        screen.blit(image, (0, 0))
-        pygame.display.flip()
+        # Update the image rendered by the weather station.
+        if weatherstation.update():
+            # If the image has changed, get it.
+            image = weatherstation.image()
 
-    # Periodially update the weather station window.
-    weather_station = WeatherStation(lambda image: update(image))
+            # Convert the returned PIL image to a pygame image.
+            image = image.resize(screensize)
+            data = image.tobytes()
+            size = image.size
+            mode = image.mode
+            image = pygame.image.fromstring(data, size, mode)
+
+            # Load the pygame image into the output window and refresh it.
+            screen.blit(image, (0, 0))
+            pygame.display.flip()
