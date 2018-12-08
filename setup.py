@@ -30,7 +30,8 @@ setuptools.setup(name='frogweather',
                  include_package_data=False,
                  install_requires = [
                      'darkskylib', 
-                     'PyYAML']
+                     'PyYAML',
+                     'pygame']
                  classifiers=[
                      'License :: OSI Approved :: MIT License',
                      'Programming Language :: Python :: 2',
