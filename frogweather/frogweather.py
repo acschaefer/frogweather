@@ -155,7 +155,7 @@ def _render_image():
     draw.fontmode = '1'  # Turn anti-aliasing off.
     _clockupdate = datetime.datetime.now()
     clocktext = '{:>2d}:{:02d}'.format(_clockupdate.hour, _clockupdate.minute)
-    draw.text((5, 5), clocktext, font=_fonts[0], fill=_fontcolor)
+    draw.text((5, 7), clocktext, font=_fonts[0], fill=_fontcolor)
     
     # Draw the temperature.
     temptext = ''
@@ -163,7 +163,7 @@ def _render_image():
         logging.warn('Cannot display temperature: no information available.')
     else:
         temptext = u'{:> 3.0f}°'.format(_temp)
-    draw.text((4, 26), temptext, font=_fonts[1], fill=_fontcolor)
+    draw.text((4, 28), temptext, font=_fonts[1], fill=_fontcolor)
     
     # Draw the precipitation probability.
     preciptext = ''
@@ -172,7 +172,7 @@ def _render_image():
             'no information available.')
     else:
         preciptext = '{:>4.0%}'.format(min(_precip, 0.99))
-    draw.text((32, 26), preciptext, font=_fonts[1], fill=_fontcolor)
+    draw.text((32, 28), preciptext, font=_fonts[1], fill=_fontcolor)
     
     logging.info('Image rendered.')
 
