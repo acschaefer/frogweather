@@ -232,7 +232,9 @@ def _update_background():
     # If the image currently on display is among the retrieved images, do
     # nothing. Otherwise, randomly select one of the images found. If none was
     # found, create a monochrome image.
-    if _backgroundfile not in imagefiles:
+    if _backgroundfile in imagefiles:
+        logging.info('No background image update: last image still valid.')
+    else:
         if imagefiles:
             _backgroundfile = imagefiles[random.randint(0, len(imagefiles)-1)]
             _background = Image.open(_backgroundfile)
@@ -301,10 +303,11 @@ if __name__ == '__main__':
 
     # Import required module.
     import sys
+    import duallog
     import pygame
 
     # Set up logging.
-    logging.basicConfig(level=logging.INFO)
+    duallog.setup('log')
 
     # Define the size of the weather station window.
     screensize = (240, 480)
