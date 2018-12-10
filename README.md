@@ -1,10 +1,12 @@
 # Frogweather - a Frog-Themed Weather Station
 
-<img src="screenshots/screenshot_summer.png" width="200"/>
-<img src="screenshots/screenshot_rain.png" width="200"/>
-<img src="screenshots/screenshot_winter.png" width="200"/>
+<p align="left">
+    <img src="screenshots/screenshot_summer.png" width="200"/>
+    <img src="screenshots/screenshot_rain.png" width="200"/>
+    <img src="screenshots/screenshot_winter.png" width="200"/>
+</p>
 
-[Screenshots](https://github.com/acschaefer/frogweather/screenshots)
+[Screenshots](https://github.com/acschaefer/frogweather/blob/master/screenshots)
 
 ## What is Frogweather?
 
@@ -17,7 +19,7 @@ Since this app is meant to provide weather station images that are displayed on
 a 64x128 LED matrix, the images are of size 64x128. If you need other sizes, you
 can resize the images or replace the background images by your own images. The
 background images are located in the
-[`images`](https://github.com/acschaefer/frogweather/images) folder.
+[`images`](https://github.com/acschaefer/frogweather/tree/master/images) folder.
 
 ## How to use Frogweather?
 
@@ -33,11 +35,11 @@ First, run the example program:
     times a day without charge. Frogweather is designed not to exceed this 
     limit.
 3. Paste your key into the file
-    [`darkskykey.yaml`](https://github.com/acschaefer/frogweather/darkskykey.yaml).
+    [`darkskykey.yaml`](https://github.com/acschaefer/frogweather/tree/master/darkskykey.yaml).
 4. Find out the geographical coordinates of your location, for example via [GPS
    Coordinates](https://www.gps-coordinates.net/).
 5. Paste your coordinates into the file
-   [`location.yaml`](https://github.com/frogweather/location.yaml).
+   [`location.yaml`](https://github.com/frogweather/tree/master/location.yaml).
 6. Run the example program: 
 
    ```shell
