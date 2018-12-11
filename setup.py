@@ -18,16 +18,17 @@ with io.open(os.path.join(maindir, 'README.md'), encoding='utf-8') as file:
 
 # Configure setuptools.
 setuptools.setup(name='frogweather',
-                 version='0.3',
+                 version='0.4',
                  description='Frog-themed weather station',
                  long_description=readme,
                  long_description_content_type='text/markdown',
                  license='MIT',
-                 url = 'https://github.com/acschaefer/frogweather',
+                 url='https://github.com/acschaefer/frogweather',
                  author='Alexander Schaefer',
                  author_email='acschaefer@users.noreply.github.com',
                  maintainer='Alexander Schaefer',
                  include_package_data=False,
+                 packages=['frogweather'],
                  install_requires = [
                      'darkskylib', 
                      'PyYAML',
