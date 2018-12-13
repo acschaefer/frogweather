@@ -22,6 +22,13 @@ Use this module as follows:
 5. Access the image via "frogweather.get_image()".
 """
 
+# Check Python version.
+import sys
+version = sys.version_info[0]
+if version != 2:
+    raise Exception('Frogweather requires Python 2. '
+        'You are using Python {}.'.format(version))
+
 # Import standard modules.
 import datetime
 import logging
@@ -316,7 +323,6 @@ if __name__ == '__main__':
     """
 
     # Import required module.
-    import sys
     import duallog
     import pygame
 
