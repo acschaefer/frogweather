@@ -43,7 +43,7 @@ _weatherupdate = None   # Time of last weather update.
 _clockupdate = None     # Time of last clock update.
 _temp = None            # Current temperature.
 _precip = None          # Current precipitation probability.
-_desc = None            # Current weather description.
+_desc = ''              # Current weather description.
 _image = None           # Current weather station image.
 _background = None      # Background image.
 _backgroundfile = None  # Background image file name.
@@ -241,9 +241,9 @@ def _update_background():
             logging.info('Selected image: \"{}\".'.format(_backgroundfile))
         else:
             # If no default image is available, generate a monochrome image.
-            _backgroundfile = None
+            logging.info('Creating default background image ...')
             _background = Image.new('RGB', (64, 128), color='blue')
-            logging.info('Created default background image.')
+            _backgroundfile = None
 
     logging.info('Background image loaded.')
         
@@ -264,8 +264,11 @@ def _update_weather():
             'Cannot call weather API in order not to exceed daily limit. '
             'Time to next call {:.1f} s.'.format(waittime.total_seconds()))
         return
-    else:
-        _weatherupdate = time
+    
+    _weatherupdate = time
+    _temp = None
+    _precip = None
+    _desc = ''
 
     # Get the current weather.
     logging.info('Downloading weather information from server ...')
