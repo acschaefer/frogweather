@@ -18,7 +18,7 @@ with io.open(os.path.join(maindir, 'README.md'), encoding='utf-8') as file:
 
 # Configure setuptools.
 setuptools.setup(name='frogweather',
-                 version='0.4',
+                 version='0.5',
                  description='Frog-themed weather station',
                  long_description=readme,
                  long_description_content_type='text/markdown',
