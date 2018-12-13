@@ -241,7 +241,7 @@ def _update_background():
             logging.info('Selected image: \"{}\".'.format(_backgroundfile))
         else:
             # If no default image is available, generate a monochrome image.
-            logging.info('Creating default background image ...')
+            logging.info('Creating fallback background image ...')
             _background = Image.new('RGB', (64, 128), color='blue')
             _backgroundfile = None
 
