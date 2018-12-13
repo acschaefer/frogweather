@@ -43,7 +43,7 @@ _weatherupdate = None   # Time of last weather update.
 _clockupdate = None     # Time of last clock update.
 _temp = None            # Current temperature.
 _precip = None          # Current precipitation probability.
-_desc = ''              # Current weather description.
+_desc = None            # Current weather description.
 _image = None           # Current weather station image.
 _background = None      # Background image.
 _backgroundfile = None  # Background image file name.
@@ -61,6 +61,9 @@ _waittime = datetime.timedelta(days=1) / 1000
 # Determine the package directory.
 _pkgdir = os.path.normpath(os.path.join(
     os.path.dirname(os.path.abspath(__file__)), os.pardir))
+
+# Determine the image directory.
+_imagedir = os.path.join(_pkgdir, 'images')
 
 
 def init():
@@ -160,7 +163,7 @@ def _render_image():
     # Draw the temperature.
     temptext = ''
     if _temp is None:
-        logging.warn('Cannot display temperature: no information available.')
+        logging.warning('Cannot display temperature: no information available.')
     else:
         temptext = u'{:> 3.0f}°'.format(_temp)
     draw.text((4, 28), temptext, font=_fonts[1], fill=_fontcolor)
@@ -168,7 +171,7 @@ def _render_image():
     # Draw the precipitation probability.
     preciptext = ''
     if _precip is None:
-        logging.warn('Cannot display precipitation probability: '
+        logging.warning('Cannot display precipitation probability: '
             'no information available.')
     else:
         preciptext = '{:>4.0%}'.format(min(_precip, 0.99))
@@ -191,37 +194,45 @@ def _update_background():
     # Get all images that correspond to both the current weather description and
     # the current temperature.
     imagefiles = []
-    imagedir = os.path.join(_pkgdir, 'images')
-    descdir = os.path.join(imagedir, _desc)
-    logging.info('Searching images in directory \"{}\" ...'.format(descdir))
-    try:
-        for file in os.listdir(descdir):
-            tempdir = os.path.join(descdir, file)
-            if os.path.isdir(tempdir):
-                temprange = [float(bound) for bound in file.split('_')]
-                if temprange[0] <= round(_temp) <= temprange[-1]:
-                    imagefiles += [os.path.join(tempdir, file) \
-                        for file in os.listdir(tempdir) \
-                        if os.path.splitext(file)[-1].lower() in _imageexts]
-        
-        # If no image for the specified temperature is available, search for
-        # default images that correspond to the current weather description.
+    if _desc:
+        descdir = os.path.join(_imagedir, _desc)
+        logging.info('Searching images in directory \"{}\" ...'.format(descdir))
+        if _temp:
+            try:
+                for file in os.listdir(descdir):
+                    tempdir = os.path.join(descdir, file)
+                    if os.path.isdir(tempdir):
+                        temprange = [float(bound) for bound in file.split('_')]
+                        if temprange[0] <= round(_temp) <= temprange[-1]:
+                            imagefiles.extend([os.path.join(tempdir, file) \
+                                for file in os.listdir(tempdir) \
+                                if os.path.splitext(file)[-1].lower() \
+                                    in _imageexts])
+            except Exception as e:
+                logging.warning(e)
+        print(imagefiles)    
+        # If no image corresponds to the current temperature, search for default
+        # images that correspond to the current weather description.
         if not imagefiles:
-            imagefiles = [os.path.join(descdir, file) \
-                for file in os.listdir(descdir) \
-                if os.path.splitext(file)[-1].lower() in _imageexts]
-    except Exception as e:
-        logging.warning(e)
-    logging.info('Found {} image(s).'.format(len(imagefiles)))
+            try:
+                for file in os.listdir(descdir):
+                    descfile = os.path.join(descdir, file)
+                    if os.path.isfile(descfile):
+                        ext = os.path.splitext(descfile)[-1].lower()
+                        if ext in _imageexts:
+                            imagefiles.append(descfile)
+            except Exception as e:
+                logging.warning(e)
+        logging.info('Found {} image(s).'.format(len(imagefiles)))
 
-    # If no image for the current weather description is available, search for
+    # If no image corresponds to the current weather description, search for
     # default images.
     if not imagefiles:
         logging.info('Searching images in directory \"{}\" ...'.format(
-            imagedir))
+            _imagedir))
         try:
-            for file in os.listdir(imagedir):
-                filepath = os.path.join(imagedir, file)
+            for file in os.listdir(_imagedir):
+                filepath = os.path.join(_imagedir, file)
                 if os.path.isfile(filepath) \
                         and os.path.splitext(file)[-1].lower() in _imageexts:
                     imagefiles.append(filepath)
@@ -268,7 +279,7 @@ def _update_weather():
     _weatherupdate = time
     _temp = None
     _precip = None
-    _desc = ''
+    _desc = None
 
     # Get the current weather.
     logging.info('Downloading weather information from server ...')
@@ -296,7 +307,7 @@ def _update_weather():
                 'precipitation: {:.0%}.'.format(_desc, _temp, _precip))
     except Exception as e:
         logging.error('Failed to retrieve weather information: {}.'.format(e))
-
+    
     logging.info('Weather information updated.')
 
 
