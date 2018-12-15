@@ -3,9 +3,12 @@
 # "lat" specifies the latitude in degrees; north is positive, south is negative.
 # "lon" specifies the longitude in degrees; east is positive, west is negative.
 
+lat: 47.662639
+lon: -122.342302
+
 # Berlin.
-lat: 52.5200
-lon: 13.4050
+# lat: 52.5200
+# lon: 13.4050
 
 # London.
 # lat: 51.5074

@@ -217,7 +217,7 @@ def _update_background():
                                     in _imageexts])
             except Exception as e:
                 logging.warning(e)
-        print(imagefiles)    
+        
         # If no image corresponds to the current temperature, search for default
         # images that correspond to the current weather description.
         if not imagefiles:
