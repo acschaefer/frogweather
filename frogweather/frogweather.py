@@ -25,8 +25,8 @@ Use this module as follows:
 # Check Python version.
 import sys
 version = sys.version_info[0]
-if version != 2:
-    raise Exception('Frogweather requires Python 2. '
+if not 2 <= version <= 3:
+    raise Exception('Frogweather requires Python 2 or 3. '
         'You are using Python {}.'.format(version))
 
 # Import standard modules.
