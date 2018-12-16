@@ -304,7 +304,7 @@ def _update_weather():
             # Determine the precipitation probability for the next couple of
             # hours.
             dry = 1.0
-            for hour in forecast.hourly[1:9]:
+            for hour in forecast.hourly[1:3]:
                 dry *= 1.0 - hour.precipProbability
             _precip = 1.0 - dry
             
