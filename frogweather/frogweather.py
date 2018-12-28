@@ -29,14 +29,14 @@ if not 2 <= version <= 3:
     raise Exception('Frogweather requires Python 2 or 3. '
         'You are using Python {}.'.format(version))
 
-# Import standard modules.
+# Import standard packages.
 import datetime
 import logging
 import os
 import random
 import time
 
-# Import external modules.
+# Import external packages.
 import darksky
 from PIL import Image, ImageDraw, ImageFont
 import yaml
