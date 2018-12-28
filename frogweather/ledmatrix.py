@@ -26,11 +26,14 @@ frogweather.init()
 
 # Create the LED matrix controller.
 options = RGBMatrixOptions()
+options.hardware_mapping = 'adafruit-hat-pwm'
 options.rows = 64
 options.cols = 64
 options.chain_length = 2
+options.pixel_mapper_config="Rotate:90"
 options.parallel = 1
-options.hardware_mapping = 'adafruit-hat'
+options.brightness = 70
+options.led_rgb_sequence = 'RBG'
 matrix = RGBMatrix(options=options)
 
 # Periodically update the weather station image.
