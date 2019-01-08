@@ -34,6 +34,8 @@ options.pixel_mapper_config="Rotate:90"
 options.parallel = 1
 options.brightness = 70
 options.led_rgb_sequence = 'RBG'
+options.show_refresh_rate = False
+options.scan_mode = 1
 matrix = RGBMatrix(options=options)
 
 # Periodically update the weather station image.
