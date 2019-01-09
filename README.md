@@ -82,3 +82,30 @@ following steps:
   images shown in Google's weather app.
 * This app is [powered by Dark Sky](https://darksky.net/poweredby/): The weather
   data is downloaded from the Dark Sky weather server.
+
+## How to set up the LED matrix weather station
+
+1. Plug the Adafruit LED Matrix Bonnet on the connectors of the Raspberry Pi.
+1. Connect the LED Matrix Bonnet to two 64x64 LED matrices using the Hub 75 connector.
+1. Connect the LED Matrix Bonnet to the matrices via the power cables.
+1. Power up the LED Matrix Bonnet and the Raspberry Pi.
+1. Boot Raspbian Lite on the Raspberry Pi.
+1. Install and configure ssh: `sudo raspi-config`.
+1. Set up WiFi: `sudo raspi-config`.
+1. Switch off on-board sound (dtparam=audio=off in /boot/config.txt)
+1. Disable unnecessary services: `sudo apt-get remove bluez bluez-firmware pi-bluetooth triggerhappy pigpio`
+2. Append `isolcpus=3` to the system file `/boot/cmdline.txt` in order to isolate the fourth CPU from tasks scheduled by the operating system.
+3. Download LED matrix driver repository (https://github.com/hzeller/rpi-rgb-led-matrix)
+4. Make the Python bindings of the LED matrix driver: In rpi-rgb-led-matrix/bindings/python/ run 
+    ```
+    sudo apt-get update && sudo apt-get install python2.7-dev python-pillow -y
+make build-python
+sudo make install-python
+    ```
+5. Download the weather station repository: https://github.com/acschaefer/frogweather.
+6. Add the key to the Dark Sky API to the file frogweather/darkskykey.yaml.
+7. Specify your location in the file frogweather/location.yaml.
+8. Start the weather station via `sudo python frogweather/frogweather/ledmatrix.py` to check if everything is working.
+9. Append the command `sudo python /path/to/frogweather/frogweather/ledmatrix.py` to the `~/.bashrc` script. 
+The weather station is now started at every login.
+
