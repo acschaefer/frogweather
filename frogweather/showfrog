@@ -51,17 +51,17 @@ while True:
     time.sleep(1.0)
 
     # Shut down the matrix during the night and restart in the morning.
-    time = datetime.time.now()
-    if time.hours in night:
+    now = datetime.datetime.now()
+    if now.hour in night:
         logging.info('Shutting down LED matrix controller for hibernation ...')
         del matrix
         logging.matrix('LED matrix controller shut down.')
 
-        waketime = time
+        waketime = now
         waketime.hour = night[1] + 1
         waketime.minute = 0
         waketime.second = 0
-        time.sleep(waketime - time).total_seconds())
+        time.sleep(waketime - now).total_seconds()
         
         logging.info('Restarting matrix controller after hibernation.')
         matrix = RGBMatrix(options=options)
