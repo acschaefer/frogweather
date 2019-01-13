@@ -12,7 +12,6 @@ if not 2 <= version <= 3:
 
 # Import standard packages.
 import datetime
-import logging
 import time
 
 # Set up logging.
@@ -36,33 +35,21 @@ options.cols = 64
 options.chain_length = 2
 options.pixel_mapper_config="Rotate:90"
 options.parallel = 1
-options.brightness = 70
 options.led_rgb_sequence = 'RBG'
 options.show_refresh_rate = False
 options.scan_mode = 1
 matrix = RGBMatrix(options=options)
 
 # Periodically update the weather station image.
-night = [0, 5]
 while True:
+    # Set the matrix brightness depending on the time of day.
+    if 0 <= datetime.datetime.now().hour < 6:
+        matrix.brightness = 5
+    else:
+        matrix.brightness = 50
+
     # If the weather station image changed, display it.
     if frogweather.update():
         matrix.SetImage(frogweather.get_image().convert('RGB'))
 
     time.sleep(1.0)
-
-    # Shut down the matrix during the night and restart in the morning.
-    now = datetime.datetime.now()
-    if night[0] <= now.hour <= night[1]:
-        logging.info('Shutting down LED matrix controller for hibernation ...')
-        del matrix
-        logging.info('LED matrix controller shut down.')
-
-        waketime = datetime.datetime(
-            year=now.year, month=now.month, day=now.day, hour=night[1]+1)
-        print((waketime - now).total_seconds())
-        time.sleep((waketime - now).total_seconds())
-        
-        logging.info('Restarting matrix controller after hibernation.')
-        matrix = RGBMatrix(options=options)
-        logging.info('Matrix controller restarted.')
