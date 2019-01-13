@@ -18,7 +18,7 @@ with io.open(os.path.join(maindir, 'README.md'), encoding='utf-8') as file:
 
 # Configure setuptools.
 setuptools.setup(name='frogweather',
-                 version='0.8',
+                 version='0.9',
                  description='Frog-themed weather station',
                  long_description=readme,
                  long_description_content_type='text/markdown',
@@ -32,9 +32,9 @@ setuptools.setup(name='frogweather',
                  scripts=['frogweather/showfrog'],
                  install_requires = [
                      'darkskylib', 
-                     'PyYAML',
+                     'duallog',
                      'pygame',
-                     'duallog'],
+                     'PyYAML'],
                  classifiers=[
                      'License :: OSI Approved :: MIT License',
                      'Programming Language :: Python :: 2',
