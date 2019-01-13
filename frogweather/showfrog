@@ -12,6 +12,7 @@ if not 2 <= version <= 3:
 
 # Import standard packages.
 import datetime
+import logging
 import time
 
 # Set up logging.
@@ -52,16 +53,15 @@ while True:
 
     # Shut down the matrix during the night and restart in the morning.
     now = datetime.datetime.now()
-    if now.hour in night:
+    if night[0] <= now.hour <= night[1]:
         logging.info('Shutting down LED matrix controller for hibernation ...')
         del matrix
-        logging.matrix('LED matrix controller shut down.')
+        logging.info('LED matrix controller shut down.')
 
-        waketime = now
-        waketime.hour = night[1] + 1
-        waketime.minute = 0
-        waketime.second = 0
-        time.sleep(waketime - now).total_seconds()
+        waketime = datetime.datetime(
+            year=now.year, month=now.month, day=now.day, hour=night[1]+1)
+        print((waketime - now).total_seconds())
+        time.sleep((waketime - now).total_seconds())
         
         logging.info('Restarting matrix controller after hibernation.')
         matrix = RGBMatrix(options=options)
