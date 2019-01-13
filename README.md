@@ -12,7 +12,7 @@
 
 Frogweather is a weather app written in Python. It generates images that show
 both the current time and weather information, specifically the temperature and
-precipitation probability within the next nine hours. The background image shows
+precipitation probability within the next three hours. The background image shows
 a frog-themed visualization of the current weather.
 
 Since this app is meant to provide weather station images that are displayed on
@@ -108,4 +108,4 @@ sudo make install-python
 8. Start the weather station via `sudo python frogweather/frogweather/ledmatrix.py` to check if everything is working.
 9. Append the command `sudo python /path/to/frogweather/frogweather/ledmatrix.py &` to the `/etc/rc.local` script. 
 The weather station is now started at every login.
-
+1. Uninstall smbd etc.
