@@ -29,6 +29,7 @@ setuptools.setup(name='frogweather',
                  maintainer='Alexander Schaefer',
                  include_package_data=False,
                  packages=['frogweather'],
+                 scripts=['frogweather/showfrog'],
                  install_requires = [
                      'darkskylib', 
                      'PyYAML',

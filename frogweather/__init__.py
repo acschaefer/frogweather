@@ -1,1 +1,1 @@
-from .frogweather import frogweather
+from frogweather import frogweather
