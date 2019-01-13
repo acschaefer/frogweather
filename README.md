@@ -106,6 +106,6 @@ sudo make install-python
 6. Add the key to the Dark Sky API to the file frogweather/darkskykey.yaml.
 7. Specify your location in the file frogweather/location.yaml.
 8. Start the weather station via `sudo python frogweather/frogweather/ledmatrix.py` to check if everything is working.
-9. Append the command `sudo python /path/to/frogweather/frogweather/ledmatrix.py` to the `~/.bashrc` script. 
+9. Append the command `sudo python /path/to/frogweather/frogweather/ledmatrix.py &` to the `/etc/rc.local` script. 
 The weather station is now started at every login.
 
