@@ -125,9 +125,9 @@ def update():
     """
 
     # If the weather station image is outdated, update it.
-    time = datetime.datetime.now()
-    if not _clockupdate or time.minute != _clockupdate.minute \
-            or not _weatherupdate or time - _weatherupdate >= _waittime:
+    now = datetime.datetime.now()
+    if not _clockupdate or now.minute != _clockupdate.minute \
+            or not _weatherupdate or now - _weatherupdate >= _waittime:
         _render_image()
         return True
     else:
@@ -275,15 +275,15 @@ def _update_weather():
     logging.info('Updating weather information ...')
 
     # If the waiting time to the next call has not yet passed, do nothing.
-    time = datetime.datetime.now()
-    if _weatherupdate and time - _weatherupdate < _waittime:
-        waittime = _waittime - (time - _weatherupdate)
+    now = datetime.datetime.now()
+    if _weatherupdate and now - _weatherupdate < _waittime:
+        waittime = _waittime - (now - _weatherupdate)
         logging.info(
             'Cannot call weather API in order not to exceed daily limit. '
             'Time to next call {:.1f} s.'.format(waittime.total_seconds()))
         return
     
-    _weatherupdate = time
+    _weatherupdate = now
     _temp = None
     _precip = None
     _desc = None
