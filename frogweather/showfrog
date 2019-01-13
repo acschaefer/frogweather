@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-"""Frog-themed weather station displayed on two 64x64 LED matrices
+"""Display frog-themed weather station on two 64x64 LED matrices
 """
 
 # Check Python version.
@@ -10,6 +10,10 @@ if not 2 <= version <= 3:
     raise Exception('Frogweather requires Python 2 or 3. '
         'You are using Python {}.'.format(version))
 
+# Import standard packages.
+import datetime
+import time
+
 # Set up logging.
 import duallog
 duallog.setup('log')
@@ -18,7 +22,6 @@ duallog.setup('log')
 import frogweather
 from PIL import Image
 from rgbmatrix import RGBMatrix, RGBMatrixOptions
-import time
 
 
 # Initialize the weather station.
@@ -39,9 +42,25 @@ options.scan_mode = 1
 matrix = RGBMatrix(options=options)
 
 # Periodically update the weather station image.
+night = [0, 5]
 while True:
-    # If the image changed, display it.
+    # If the weather station image changed, display it.
     if frogweather.update():
         matrix.SetImage(frogweather.get_image().convert('RGB'))
 
     time.sleep(1.0)
+
+    # Shut down the matrix during the night and restart in the morning.
+    time = datetime.time.now()
+    if time.hours in night:
+        logging.info('Shutting down LED matrix controller for hibernation ...')
+        del matrix
+        logging.matrix('LED matrix controller shut down.')
+
+        waketime = time
+        waketime.hour = night[1] + 1
+        time.sleep(waketime - time).total_seconds())
+        
+        logging.info('Restarting matrix controller after hibernation.')
+        matrix = RGBMatrix(options=options)
+        logging.info('Matrix controller restarted.')
