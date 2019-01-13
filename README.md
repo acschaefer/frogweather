@@ -92,15 +92,28 @@ above steps to download and run the example script `frogweather.py`. Once that
 is done, carry out the following steps in software:
 1. Install Raspbian Lite on the Raspberry Pi.
 2. Switch off on-board sound: Change the corresponding line in the Raspbian
-   system file `/boot/config.txt` to `dtparam=audio=off`.
+   system file `/boot/config.txt` to 
+   
+   ```
+   dtparam=audio=off
+   ```
+
 3. Disable unnecessary services: 
  
    ```shell
    sudo apt-get remove bluez bluez-firmware pi-bluetooth triggerhappy pigpio
    ```
 
-4. Isolate the fourth CPU from tasks scheduled by the operating system: Append
-   `isolcpus=3` to the Raspbian system file `/boot/cmdline.txt`.
+4. To isolate the fourth CPU from tasks scheduled by the operating system,
+   append the following to the Raspbian system file `/boot/cmdline.txt`:
+
+   ```
+   isolcpus=3
+   ```
+
+   Make sure the command above is separated by a space from the preceding
+   commands; do not insert a line break.
+
 5. Download the excellent [Raspberry Pi LED matrix driver
    repository](https://github.com/hzeller/rpi-rgb-led-matrix):
 
