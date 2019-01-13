@@ -59,6 +59,8 @@ while True:
 
         waketime = time
         waketime.hour = night[1] + 1
+        waketime.minute = 0
+        waketime.second = 0
         time.sleep(waketime - time).total_seconds())
         
         logging.info('Restarting matrix controller after hibernation.')
