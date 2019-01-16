@@ -16,7 +16,7 @@ import time
 
 # Set up logging.
 import duallog
-duallog.setup('log')
+duallog.setup('log/frogweather')
 
 # Import external packages.
 import frogweather

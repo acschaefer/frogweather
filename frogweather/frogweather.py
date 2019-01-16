@@ -327,7 +327,7 @@ if __name__ == '__main__':
     import pygame
 
     # Set up logging.
-    duallog.setup('log')
+    duallog.setup('log/frogweather')
 
     # Define the size of the weather station window.
     screensize = (240, 480)
