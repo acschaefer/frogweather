@@ -3,8 +3,9 @@
 # "lat" specifies the latitude in degrees; north is positive, south is negative.
 # "lon" specifies the longitude in degrees; east is positive, west is negative.
 
-lat: 47.662639
-lon: -122.342302
+# Heuweiler.
+lat: 48.052622
+lon: 7.904252
 
 # Berlin.
 # lat: 52.5200
