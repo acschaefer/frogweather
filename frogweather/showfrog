@@ -46,7 +46,7 @@ while True:
     if 0 <= datetime.datetime.now().hour < 6:
         matrix.brightness = 5
     else:
-        matrix.brightness = 50
+        matrix.brightness = 35
 
     # If the weather station image changed, display it.
     if frogweather.update():
