@@ -145,7 +145,12 @@ is done, carry out the following steps in software:
    
    ```shell
    sudo python /path/to/frogweather/frogweather/showfrog &
-   ``` 
+   ```
+
+The result looks like this:
+![](weather_station.jpg)
+
+[Frogweather weather station](https://github.com/acschaefer/frogweather/blob/master/weather_station.jpg)
 
 ## Credits
 
