@@ -3,6 +3,7 @@
 # "lat" specifies the latitude in degrees; north is positive, south is negative.
 # "lon" specifies the longitude in degrees; east is positive, west is negative.
 
+# Seattle.
 lat: 47.662639
 lon: -122.342302
 
