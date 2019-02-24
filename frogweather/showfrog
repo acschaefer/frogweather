@@ -43,10 +43,11 @@ matrix = RGBMatrix(options=options)
 # Periodically update the weather station image.
 while True:
     # Set the matrix brightness depending on the time of day.
-    if 0 <= datetime.datetime.now().hour < 6:
+    hour = datetime.datetime.now().hour
+    if hour >= 23 or hour <= 6:
         matrix.brightness = 5
     else:
-        matrix.brightness = 35
+        matrix.brightness = 30
 
     # If the weather station image changed, display it.
     if frogweather.update():
