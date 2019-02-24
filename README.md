@@ -10,16 +10,13 @@
 
 ## What is frogweather?
 
-Frogweather is a weather app and library written in Python. It generates images
-that show both the current time and weather information, specifically the
-temperature and precipitation probability within the next three hours. The
-background image shows a frog-themed visualization of the current weather.
+Frogweather is a weather app and library written in Python. 
+It generates images that show both the current time and weather information, specifically the temperature and precipitation probability within the next three hours. 
+The background image shows a frog-themed visualization of the current weather.
 
-Since this app is meant to provide weather station images that are displayed on
-a 64x128 LED matrix, the images are of size 64x128. If you need other sizes, you
-can resize the images or replace the background images by your own images. The
-background images are located in the
-[`images`](https://github.com/acschaefer/frogweather/tree/master/images) folder.
+Since this app is meant to provide weather station images that are displayed on a 64x128 LED matrix, the images are of size 64x128. 
+If you need other sizes, you can resize the images or replace the background images by your own images. 
+The background images are located in the [`images`](https://github.com/acschaefer/frogweather/tree/master/images) folder.
 
 ## How to use frogweather?
 
@@ -36,10 +33,9 @@ First, run the example script:
    git clone https://github.com/acschaefer/frogweather
    ```
 
-3. [Request an API key from Dark Sky](https://darksky.net/dev/register). The key
-    comes for free and allows you to access the Dark Sky weather service 1000
-    times a day without charge. Frogweather is designed not to exceed this 
-    limit.
+3. [Request an API key from Dark Sky](https://darksky.net/dev/register). 
+   The key comes for free and allows you to access the Dark Sky weather service 1000 times a day free of charge. 
+   Frogweather is designed not to exceed this limit.
 4. Paste your key into the file
     [`darkskykey.yaml`](https://github.com/acschaefer/frogweather/tree/master/darkskykey.yaml).
 5. Find out the geographical coordinates of your location, for example via the
@@ -52,11 +48,11 @@ First, run the example script:
    python frogweather/frogweather.py
    ```
 
-   This command will open a window that displays the weather station image. It
-   will also continuously update the image.
+   This command will open a window that displays the weather station image. 
+   It will also continuously update the image.
 
-Now you can use the `frogweather` package in your own Python module. The
-following Python code snippet shows how to do it:
+Now you can use the `frogweather` package in your own Python module. 
+The following Python code snippet shows how to do it:
 
 ```python
 # Import the module.
@@ -75,24 +71,20 @@ while True:
 
 ## How does frogweather work?
 
-In order to generate an image, the `frogweather` module executes the following
-steps:
+In order to generate an image, the `frogweather` module executes the following steps:
 1. It retrieves the current time from the operating system.
-2. It downloads the current local weather information, i.e. temperature and
-   precipitation probability, from the Dark Sky weather server.
+2. It downloads the current local weather information, i.e. temperature and precipitation probability, from the Dark Sky weather server.
 3. It renders the weather station image.
 
 ## How to set up a weather station on a Raspberry Pi?
 
-In order to set up a frogweather-powered weather station consisting of a
-Raspberry Pi and two 64x64 LED matrices, you first need to set up the hardware.
-For detailed instructions, see the [Raspberry Pi LED matrix driver
-repository](https://github.com/hzeller/rpi-rgb-led-matrix). Then, perform the
-above steps to download and run the example script `frogweather.py`. Once that
-is done, carry out the following steps in software:
+In order to set up a frogweather-powered weather station consisting of a Raspberry Pi and two 64x64 LED matrices, you first need to set up the hardware.
+For detailed instructions on setting up the matrices, see the [Raspberry Pi LED matrix driver repository](https://github.com/hzeller/rpi-rgb-led-matrix). 
+If you have access to a 3D printer, you might find my [3D model of a frame for two LED matrices](https://github.com/acschaefer/3d_models/tree/master/frogweather) helpful.
+Then, perform the above steps to download and run the example script `frogweather.py`. 
+Once everything works, perform the following software engineering:
 1. Install Raspbian Lite on the Raspberry Pi.
-2. Switch off on-board sound: Change the corresponding line in the Raspbian
-   system file `/boot/config.txt` to 
+2. Switch off on-board sound: Change the corresponding line in the Raspbian system file `/boot/config.txt` to 
    
    ```
    dtparam=audio=off
@@ -104,26 +96,22 @@ is done, carry out the following steps in software:
    sudo apt-get remove bluez bluez-firmware pi-bluetooth triggerhappy pigpio
    ```
 
-4. To isolate the fourth CPU from tasks scheduled by the operating system,
-   append the following to the Raspbian system file `/boot/cmdline.txt`:
+4. To isolate the fourth CPU from tasks scheduled by the operating system, append the following to the Raspbian system file `/boot/cmdline.txt`:
 
    ```
    isolcpus=3
    ```
 
-   Make sure the command above is separated by a space from the preceding
-   commands; do not insert a line break.
+   Make sure the command above is separated by a space from the preceding commands; do not insert a line break.
 
-5. Download the excellent [Raspberry Pi LED matrix driver
-   repository](https://github.com/hzeller/rpi-rgb-led-matrix):
+5. Download the excellent [Raspberry Pi LED matrix driver repository](https://github.com/hzeller/rpi-rgb-led-matrix):
 
    ```shell
    git clone https://github.com/hzeller/rpi-rgb-led-matrix
    ```
 
-6. Build the Python bindings of the LED matrix driver: Navigate to your clone
-    of the `rpi-rgb-led-matrix` repository and in the folder
-    `rpi-rgb-led-matrix/bindings/python/`, run the following commands:
+6. Build the Python bindings of the LED matrix driver: 
+   Navigate to your clone of the `rpi-rgb-led-matrix` repository and in the folder `rpi-rgb-led-matrix/bindings/python/`, run the following commands:
 
     ```shell
     sudo apt-get update && sudo apt-get install python2.7-dev python-pillow -y
@@ -131,8 +119,7 @@ is done, carry out the following steps in software:
     sudo make install-python
     ```
 
-7. Navigate to the folder `frogweather/frogweather` and launch the weather
-   station:
+7. Navigate to the folder `frogweather/frogweather` and launch the weather station:
 
     ```shell
     sudo ./showfrog
@@ -140,21 +127,20 @@ is done, carry out the following steps in software:
 
     The `sudo` command is required by the LED matrix driver.
 
-8. In order to launch the weather station automatically after boot, append the
-   following command to the Raspbian system file `/etc/rc.local`:
+8. In order to launch the weather station automatically after boot, append the following command to the Raspbian system file `/etc/rc.local`:
    
    ```shell
    sudo python /path/to/frogweather/frogweather/showfrog &
    ```
 
 The result looks like this:
+
 ![](weather_station.jpg)
 
 [Frogweather weather station](https://github.com/acschaefer/frogweather/blob/master/weather_station.jpg)
 
 ## Credits
 
-* The background images used in this project are modifications of the background
-  images shown in Google's weather app.
-* This app is [powered by Dark Sky](https://darksky.net/poweredby/): The weather
-  data is downloaded from the Dark Sky weather server.
+* The background images used in this project are modifications of the background images shown in Google's weather app.
+* This app is [powered by Dark Sky](https://darksky.net/poweredby/): 
+  The weather data is downloaded from the Dark Sky weather server.
