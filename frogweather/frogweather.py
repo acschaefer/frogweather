@@ -198,6 +198,12 @@ def _update_background():
     # Make sure the weather information is up to date.
     _update_weather()
 
+    now = datetime.datetime.now()
+    if now.month == 12 and now.day == 31:
+        _backgroundfile = os.path.join(_imagedir, 'new-years-eve.png')
+        _background = Image.open(_backgroundfile)
+        return    
+
     # Get all images that correspond to both the current weather description and
     # the current temperature.
     imagefiles = []
