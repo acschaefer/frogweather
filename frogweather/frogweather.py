@@ -198,16 +198,23 @@ def _update_background():
     # Make sure the weather information is up to date.
     _update_weather()
 
+    imagefiles = []
+
+    # If it is New Year's Eve or New Year's Day, select the corresponding image.
     now = datetime.datetime.now()
+    imagefile = None
     if now.month == 12 and now.day == 31:
-        _backgroundfile = os.path.join(_imagedir, 'new-years-eve.png')
-        _background = Image.open(_backgroundfile)
-        return    
+        imagefile = 'new-years-eve.png'
+    elif now.month == 1 and now.day == 1:
+        imagefile = 'new-years-day.png'
+    if imagefile is not None:
+        imagefile = os.path.join(_imagedir, imagefile)
+        if os.path.exists(imagefile):
+            imagefiles.extend(imagefile)
 
     # Get all images that correspond to both the current weather description and
     # the current temperature.
-    imagefiles = []
-    if _desc:
+    if not imagefiles and _desc:
         descdir = os.path.join(_imagedir, _desc)
         logging.info('Searching images in directory \"{}\" ...'.format(descdir))
         if _temp:
@@ -289,6 +296,7 @@ def _update_weather():
             'Time to next call {:.1f} s.'.format(waittime.total_seconds()))
         return
     
+    # Reset weather information.
     _weatherupdate = now
     _temp = None
     _precip = None
