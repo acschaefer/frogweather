@@ -330,12 +330,12 @@ if __name__ == '__main__':
     """Display and continuously update weather station image on screen.
     """
 
-    # Import required module.
+    # Import required modules.
     import duallog
     import pygame
 
     # Set up logging.
-    duallog.setup('log/frogweather')
+    duallog.setup('log/frogweather/frogweather')
 
     # Define the size of the weather station window.
     screensize = (240, 480)
