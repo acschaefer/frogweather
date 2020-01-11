@@ -198,23 +198,10 @@ def _update_background():
     # Make sure the weather information is up to date.
     _update_weather()
 
-    imagefiles = []
-
-    # If it is New Year's Eve or New Year's Day, select the corresponding image.
-    now = datetime.datetime.now()
-    imagefile = None
-    if now.month == 12 and now.day == 31:
-        imagefile = 'new-years-eve.png'
-    elif now.month == 1 and now.day == 1:
-        imagefile = 'new-years-day.png'
-    if imagefile is not None:
-        imagefile = os.path.join(_imagedir, imagefile)
-        if os.path.exists(imagefile):
-            imagefiles.extend(imagefile)
-
     # Get all images that correspond to both the current weather description and
     # the current temperature.
-    if not imagefiles and _desc:
+    imagefiles = []
+    if _desc:
         descdir = os.path.join(_imagedir, _desc)
         logging.info('Searching images in directory \"{}\" ...'.format(descdir))
         if _temp:
@@ -302,6 +289,12 @@ def _update_weather():
     _precip = None
     _desc = None
 
+    # If today is a special date, update the description accordingly.
+    if _weatherupdate.month == 1 and _weatherupdate.day == 1:
+        _desc = 'new-years-day'
+    elif now.month == 12 and now.day == 31:
+        _desc = 'new-years-eve'
+
     # Get the current weather.
     logging.info('Downloading weather information from server ...')
     try:
@@ -313,7 +306,8 @@ def _update_weather():
                 units='si') as forecast:
             # Determine the current temperature and weather description.
             _temp = forecast.currently.temperature
-            _desc = forecast.icon
+            if _desc is None:
+                _desc = forecast.icon
 
             # Determine the precipitation probability for the next couple of
             # hours.
