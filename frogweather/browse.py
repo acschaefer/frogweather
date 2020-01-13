@@ -51,7 +51,8 @@ if __name__ == '__main__':
     """Interactively display weather station images on screen.
     """
 
-    # Import required module.
+    # Import required modules.
+    import pygame
     from rgbmatrix import RGBMatrix, RGBMatrixOptions
 
     # Create the LED matrix controller.
@@ -68,10 +69,8 @@ if __name__ == '__main__':
     matrix = RGBMatrix(options=options)
     matrix.brightness = 30
 
-    # Start the pygame engine and create a window.
+    # Start the pygame engine.
     pygame.init()
-    pygame.display.set_caption('Frogweather')
-    screen = pygame.display.set_mode(screensize)
 
     # Search all available weather station images.
     imagefiles = search_images()
