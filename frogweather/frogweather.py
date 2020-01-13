@@ -330,7 +330,7 @@ if __name__ == '__main__':
     """Display and continuously update weather station image on screen.
     """
 
-    # Import required modules.
+    # Import required packages.
     import duallog
     import pygame
 
