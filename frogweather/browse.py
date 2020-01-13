@@ -1,0 +1,115 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+"""Browser for weather station images.
+"""
+
+# Check Python version.
+import sys
+version = sys.version_info[0]
+if not 2 <= version <= 3:
+    raise Exception('Frogweather requires Python 2 or 3. '
+        'You are using Python {}.'.format(version))
+
+# Import standard packages.
+import logging
+import os
+
+# Import external package.
+from PIL import Image, ImageDraw, ImageFont
+
+
+# Define the supported image file extensions.
+imageexts = ['.png', '.bmp', '.jpg', '.jpeg'] 
+
+# Determine the image directory.
+imagedir = os.path.join(_pkgdir, 'images')
+
+
+def search_images():
+    """Search for all available weather station images.
+    """
+
+    logging.info('Searching weather station images ...')
+    
+    imagefiles = []
+    logging.info('Searching images in directory \"{}\" ...'.format(imagedir))
+    for dirpath, _, filenames in os.walk(imagedir):
+        for filename in filenames:
+            if os.path.splitext(filename)[-1].lower() in imageexts:
+                imagefiles.append(os.join(dirpath, filename)
+
+    logging.info('Found {} image(s).'.format(len(imagefiles)))
+
+    return imagefiles
+
+
+if __name__ == '__main__':
+    """Interactively display weather station images on screen.
+    """
+
+    # Import required module.
+    import pygame
+
+    # Set up logging.
+    duallog.setup('log/frogweather/browse')
+
+    # Define the size of the weather station window.
+    screensize = (240, 480)
+
+    # Start the pygame engine and create a window.
+    pygame.init()
+    pygame.display.set_caption('Frogweather')
+    screen = pygame.display.set_mode(screensize)
+
+    # Search all available weather station images.
+    imagefiles = search_images()
+    
+    # If no image could be found, abort.
+    if len(imagefiles) < 1:
+        logging.error('No image files found.')
+        sys.exit()
+
+    # Initialize the image counter.
+    i = 0
+    action = 0
+
+    # Start the game loop.
+    while True:
+        # Process game events.
+        for event in pygame.event.get():
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_DOWN or event.key == pygame.K_RIGHT:
+                    action = +1
+                elif event.key == pygame.K_UP or event.key == pygame.K_LEFT:
+                    action = -1
+                elif event.key == pygame.K_SPACE \
+                    or event.key == pygame.K_RETURN:
+                    action = 0
+                elif event.key == pygame.K_ESCAPE:
+                    pygame.quit()
+                    sys.exit()
+            elif event.type == pygame.QUIT
+                pygame.quit()
+                sys.exit()
+
+        # Update the image rendered by the weather station.
+        if action is not None:
+            # Select the image file to display.
+            imagefile = imagefiles[(i+action) % len(imagefiles)]
+            logging.info('Displaying image file {} ...').format(imagefile)
+            image = Image.open(imagefile)
+
+            # Convert the returned PIL image to a pygame image.
+            image = image.resize(screensize)
+            data = image.tobytes()
+            size = image.size
+            mode = image.mode
+            image = pygame.image.fromstring(data, size, mode)
+
+            # Load the pygame image into the output window and refresh it.
+            screen.blit(image, (0, 0))
+            pygame.display.flip()
+
+            action = None
+
+        time.sleep(0.1)
