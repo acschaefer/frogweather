@@ -52,13 +52,24 @@ if __name__ == '__main__':
     """
 
     # Import required module.
-    import pygame
+    from rgbmatrix import RGBMatrix, RGBMatrixOptions
 
-    # Set up logging.
-    duallog.setup('log/frogweather/browse')
+    # Initialize the weather station.
+    frogweather.init()
 
-    # Define the size of the weather station window.
-    screensize = (240, 480)
+    # Create the LED matrix controller.
+    options = RGBMatrixOptions()
+    options.hardware_mapping = 'adafruit-hat-pwm'
+    options.rows = 64
+    options.cols = 64
+    options.chain_length = 2
+    options.pixel_mapper_config="Rotate:270"
+    options.parallel = 1
+    options.led_rgb_sequence = 'RBG'
+    options.show_refresh_rate = False
+    options.scan_mode = 1
+    matrix = RGBMatrix(options=options)
+    matrix.brightness = 30
 
     # Start the pygame engine and create a window.
     pygame.init()
@@ -98,22 +109,11 @@ if __name__ == '__main__':
 
         # Update the image rendered by the weather station.
         if action is not None:
-            # Select the image file to display.
             i = (i+action) % len(imagefiles)
             imagefile = imagefiles[i]
             logging.info('Displaying image file {} ...'.format(imagefile))
             image = Image.open(imagefile)
-
-            # Convert the returned PIL image to a pygame image.
-            image = image.resize(screensize)
-            data = image.tobytes()
-            size = image.size
-            mode = image.mode
-            image = pygame.image.fromstring(data, size, mode)
-
-            # Load the pygame image into the output window and refresh it.
-            screen.blit(image, (0, 0))
-            pygame.display.flip()
+            matrix.SetImage(image.convert('RGB'))
 
             action = None
 
