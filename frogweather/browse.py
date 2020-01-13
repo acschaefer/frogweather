@@ -10,19 +10,23 @@ if not 2 <= version <= 3:
     raise Exception('Frogweather requires Python 2 or 3. '
         'You are using Python {}.'.format(version))
 
-# Import standard packages.
+# Import required packages.
+import duallog
 import logging
 import os
-
-# Import external package.
 from PIL import Image, ImageDraw, ImageFont
+import time
 
 
 # Define the supported image file extensions.
 imageexts = ['.png', '.bmp', '.jpg', '.jpeg'] 
 
+# Determine the package directory.
+pkgdir = os.path.normpath(os.path.join(
+    os.path.dirname(os.path.abspath(__file__)), os.pardir))
+
 # Determine the image directory.
-imagedir = os.path.join(_pkgdir, 'images')
+imagedir = os.path.join(pkgdir, 'images')
 
 
 def search_images():
@@ -36,7 +40,7 @@ def search_images():
     for dirpath, _, filenames in os.walk(imagedir):
         for filename in filenames:
             if os.path.splitext(filename)[-1].lower() in imageexts:
-                imagefiles.append(os.join(dirpath, filename)
+                imagefiles.append(os.path.join(dirpath, filename))
 
     logging.info('Found {} image(s).'.format(len(imagefiles)))
 
@@ -88,15 +92,16 @@ if __name__ == '__main__':
                 elif event.key == pygame.K_ESCAPE:
                     pygame.quit()
                     sys.exit()
-            elif event.type == pygame.QUIT
+            elif event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
 
         # Update the image rendered by the weather station.
         if action is not None:
             # Select the image file to display.
-            imagefile = imagefiles[(i+action) % len(imagefiles)]
-            logging.info('Displaying image file {} ...').format(imagefile)
+            i = (i+action) % len(imagefiles)
+            imagefile = imagefiles[i]
+            logging.info('Displaying image file {} ...'.format(imagefile))
             image = Image.open(imagefile)
 
             # Convert the returned PIL image to a pygame image.
