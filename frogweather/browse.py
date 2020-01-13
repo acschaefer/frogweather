@@ -54,9 +54,6 @@ if __name__ == '__main__':
     # Import required module.
     from rgbmatrix import RGBMatrix, RGBMatrixOptions
 
-    # Initialize the weather station.
-    frogweather.init()
-
     # Create the LED matrix controller.
     options = RGBMatrixOptions()
     options.hardware_mapping = 'adafruit-hat-pwm'
