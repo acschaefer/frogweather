@@ -51,7 +51,8 @@ if __name__ == '__main__':
     """Interactively display weather station images on screen.
     """
 
-    # Import required module.
+    # Import required modules.
+    import pygame
     from rgbmatrix import RGBMatrix, RGBMatrixOptions
 
     # Create the LED matrix controller.
@@ -68,10 +69,21 @@ if __name__ == '__main__':
     matrix = RGBMatrix(options=options)
     matrix.brightness = 30
 
-    # Start the pygame engine and create a window.
+    # Define the font color in RGBA.
+    fontcolor = (250, 250, 250, 255)
+
+    # Load the fonts.
+    fontspecs = [('SourceCodePro-Bold.otf', 18), \
+        ('SourceCodePro-Regular.otf', 12)]
+    fonts = []
+    for font in fontspecs:
+        fontfile = os.path.join(pkgdir, 'fonts', font[0])
+        logging.info('Loading font from file \"{}\" ...'.format(fontfile))
+        fonts.append(ImageFont.truetype(font=fontfile, size=font[1]))
+        logging.info('Font loaded.')
+
+    # Start the pygame engine.
     pygame.init()
-    pygame.display.set_caption('Frogweather')
-    screen = pygame.display.set_mode(screensize)
 
     # Search all available weather station images.
     imagefiles = search_images()
@@ -110,6 +122,14 @@ if __name__ == '__main__':
             imagefile = imagefiles[i]
             logging.info('Displaying image file {} ...'.format(imagefile))
             image = Image.open(imagefile)
+            draw = ImageDraw.Draw(image)
+            draw.fontmode = '1'  # Turn anti-aliasing off.
+            draw.text((5, 7), '12:34', font=fonts[0], fill=fontcolor)
+            draw.text((4, 28), u'{:> 3.0f}°'.format(25), \
+                font=fonts[1], fill=fontcolor)
+            draw.text((32, 28), '{:>4.0%}'.format(0.15), \
+                font=fonts[1], fill=fontcolor)
+            
             matrix.SetImage(image.convert('RGB'))
 
             action = None
