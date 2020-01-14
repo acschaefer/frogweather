@@ -120,7 +120,7 @@ if __name__ == '__main__':
         if action is not None:
             i = (i+action) % len(imagefiles)
             imagefile = imagefiles[i]
-            logging.info('Displaying image file {} ...'.format(imagefile))
+            print('Displaying image file {} ...'.format(imagefile))
             image = Image.open(imagefile)
             draw = ImageDraw.Draw(image)
             draw.fontmode = '1'  # Turn anti-aliasing off.
