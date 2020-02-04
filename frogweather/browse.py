@@ -10,19 +10,23 @@ if not 2 <= version <= 3:
     raise Exception('Frogweather requires Python 2 or 3. '
         'You are using Python {}.'.format(version))
 
-# Import standard packages.
+# Import required packages.
+import duallog
 import logging
 import os
-
-# Import external package.
 from PIL import Image, ImageDraw, ImageFont
+import time
 
 
 # Define the supported image file extensions.
 imageexts = ['.png', '.bmp', '.jpg', '.jpeg'] 
 
+# Determine the package directory.
+pkgdir = os.path.normpath(os.path.join(
+    os.path.dirname(os.path.abspath(__file__)), os.pardir))
+
 # Determine the image directory.
-imagedir = os.path.join(_pkgdir, 'images')
+imagedir = os.path.join(pkgdir, 'images')
 
 
 def search_images():
@@ -36,7 +40,7 @@ def search_images():
     for dirpath, _, filenames in os.walk(imagedir):
         for filename in filenames:
             if os.path.splitext(filename)[-1].lower() in imageexts:
-                imagefiles.append(os.join(dirpath, filename)
+                imagefiles.append(os.path.join(dirpath, filename))
 
     logging.info('Found {} image(s).'.format(len(imagefiles)))
 
@@ -47,19 +51,39 @@ if __name__ == '__main__':
     """Interactively display weather station images on screen.
     """
 
-    # Import required module.
+    # Import required modules.
     import pygame
+    from rgbmatrix import RGBMatrix, RGBMatrixOptions
 
-    # Set up logging.
-    duallog.setup('log/frogweather/browse')
+    # Create the LED matrix controller.
+    options = RGBMatrixOptions()
+    options.hardware_mapping = 'adafruit-hat-pwm'
+    options.rows = 64
+    options.cols = 64
+    options.chain_length = 2
+    options.pixel_mapper_config="Rotate:270"
+    options.parallel = 1
+    options.led_rgb_sequence = 'RBG'
+    options.show_refresh_rate = False
+    options.scan_mode = 1
+    matrix = RGBMatrix(options=options)
+    matrix.brightness = 30
 
-    # Define the size of the weather station window.
-    screensize = (240, 480)
+    # Define the font color in RGBA.
+    fontcolor = (250, 250, 250, 255)
 
-    # Start the pygame engine and create a window.
+    # Load the fonts.
+    fontspecs = [('SourceCodePro-Bold.otf', 18), \
+        ('SourceCodePro-Regular.otf', 12)]
+    fonts = []
+    for font in fontspecs:
+        fontfile = os.path.join(pkgdir, 'fonts', font[0])
+        logging.info('Loading font from file \"{}\" ...'.format(fontfile))
+        fonts.append(ImageFont.truetype(font=fontfile, size=font[1]))
+        logging.info('Font loaded.')
+
+    # Start the pygame engine.
     pygame.init()
-    pygame.display.set_caption('Frogweather')
-    screen = pygame.display.set_mode(screensize)
 
     # Search all available weather station images.
     imagefiles = search_images()
@@ -88,27 +112,25 @@ if __name__ == '__main__':
                 elif event.key == pygame.K_ESCAPE:
                     pygame.quit()
                     sys.exit()
-            elif event.type == pygame.QUIT
+            elif event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
 
         # Update the image rendered by the weather station.
         if action is not None:
-            # Select the image file to display.
-            imagefile = imagefiles[(i+action) % len(imagefiles)]
-            logging.info('Displaying image file {} ...').format(imagefile)
+            i = (i+action) % len(imagefiles)
+            imagefile = imagefiles[i]
+            print('Displaying image file {} ...'.format(imagefile))
             image = Image.open(imagefile)
-
-            # Convert the returned PIL image to a pygame image.
-            image = image.resize(screensize)
-            data = image.tobytes()
-            size = image.size
-            mode = image.mode
-            image = pygame.image.fromstring(data, size, mode)
-
-            # Load the pygame image into the output window and refresh it.
-            screen.blit(image, (0, 0))
-            pygame.display.flip()
+            draw = ImageDraw.Draw(image)
+            draw.fontmode = '1'  # Turn anti-aliasing off.
+            draw.text((5, 7), '12:34', font=fonts[0], fill=fontcolor)
+            draw.text((4, 28), u'{:> 3.0f}°'.format(25), \
+                font=fonts[1], fill=fontcolor)
+            draw.text((32, 28), '{:>4.0%}'.format(0.15), \
+                font=fonts[1], fill=fontcolor)
+            
+            matrix.SetImage(image.convert('RGB'))
 
             action = None
 
