@@ -24,7 +24,7 @@ First, run the example script:
 1. Install the dependencies via `pip`:
 
    ```shell
-   pip install darkskylib duallog pygame PyYAML
+   pip install pygame PyYAML requests
    ```
 
 2. Clone the repository:
@@ -33,11 +33,11 @@ First, run the example script:
    git clone https://github.com/acschaefer/frogweather
    ```
 
-3. [Request an API key from Dark Sky](https://darksky.net/dev/register). 
-   The key comes for free and allows you to access the Dark Sky weather service 1000 times a day free of charge. 
+3. [Request an API key from Weather API](https://www.weatherapi.com). 
+   The key comes for free and allows you to access the Weather API weather service 1M times per month free of charge. 
    Frogweather is designed not to exceed this limit.
 4. Paste your key into the file
-    [`darkskykey.yaml`](https://github.com/acschaefer/frogweather/tree/master/darkskykey.yaml).
+    [`apikey.yaml`](https://github.com/acschaefer/frogweather/tree/master/apikey.yaml).
 5. Find out the geographical coordinates of your location, for example via the
    [GPS Coordinates website](https://www.gps-coordinates.net/).
 6. Paste your coordinates into the file
@@ -73,7 +73,7 @@ while True:
 
 In order to generate an image, the `frogweather` module executes the following steps:
 1. It retrieves the current time from the operating system.
-2. It downloads the current local weather information, i.e. temperature and precipitation probability, from the Dark Sky weather server.
+2. It downloads the current local weather information, i.e. temperature and precipitation probability, from Weather API.
 3. It renders the weather station image.
 
 ## How to set up a weather station on a Raspberry Pi?
@@ -141,6 +141,4 @@ The result looks like this:
 
 ## Credits
 
-* The background images used in this project are modifications of the background images shown in Google's weather app.
-* This app is [powered by Dark Sky](https://darksky.net/poweredby/): 
-  The weather data is downloaded from the Dark Sky weather server.
+The background images used in this project are modifications of the background images shown in Google's weather app.
