@@ -162,6 +162,7 @@ def _render_image():
     draw.fontmode = '1'  # Turn anti-aliasing off.
     _clockupdate = datetime.datetime.now()
     clocktext = '{:>5}'.format(_clockupdate.strftime('%I:%M'))
+    clocktext = clocktext.replace('0', ' ', int(clocktext[0] == '0'))
     draw.text((5, 7), clocktext, font=_fonts[0], fill=_fontcolor)
 
     # Draw the temperature.
