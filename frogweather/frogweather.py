@@ -8,12 +8,12 @@ information.
 In order to generate an image, the module executes the following steps:
 1. It retrieves the current time from the operating system.
 2. It downloads the current local weather information, i.e. temperature and
-   precipitation probability, from the Dark Sky weather server.
+   precipitation probability, from the Weather API server.
 3. It creates an image that displays both the time and the weather information
    on top of a frog-themed background image that reflects the current weather.
 
 Use this module as follows:
-1. Add the key to the Dark Sky API to the file "darkskykey.yaml".
+1. Add the key to the Weather API to the file "apikey.yaml".
 2. Specify the geographical coordinates of your location in the file
    "location.yaml".
 3. In Python, import this module and call "frogweather.init()" to make it read
@@ -23,6 +23,7 @@ Use this module as follows:
 """
 
 # Check Python version.
+import requests
 import sys
 version = sys.version_info[0]
 if not 2 <= version <= 3:
@@ -37,13 +38,12 @@ import random
 import time
 
 # Import external packages.
-import darksky
 from PIL import Image, ImageDraw, ImageFont
 import yaml
 
 
 # Initialize global variables.
-_apikey = None          # Dark Sky API key.
+_apikey = None          # API key.
 _loc = None             # Geographical location of the user.
 _fonts = []             # Fonts for drawing time and weather information.
 _weatherupdate = None   # Time of last weather update.
@@ -56,14 +56,15 @@ _background = None      # Background image.
 _backgroundfile = None  # Background image file name.
 
 # Define the supported image file extensions.
-_imageexts = ['.png', '.bmp', '.jpg', '.jpeg'] 
+_imageexts = ['.png', '.bmp', '.jpg', '.jpeg']
 
 # Define the font color in RGBA.
 _fontcolor = (250, 250, 250, 255)
 
-# Compute the minimum duration between two calls to the Dark Sky weather
-# API in order not to exceed the daily limit.
-_waittime = datetime.timedelta(days=1) / 1000
+# Compute the minimum duration between two calls to
+# Weather API in order not to exceed the monthly limit.
+_waittime = max(datetime.timedelta(seconds=10),
+                datetime.timedelta(days=31) / 1000000)
 
 # Determine the package directory.
 _pkgdir = os.path.normpath(os.path.join(
@@ -76,33 +77,33 @@ _imagedir = os.path.join(_pkgdir, 'images')
 def init():
     """Initialize frogweather module.
 
-    Loads the Dark Sky API key, the user's geographical location, and the
+    Loads the API key, the user's geographical location, and the
     required fonts from file.
     """
 
     global _apikey, _loc, _fonts
-    
+
     logging.info('Initializing frogweather module ...')
 
-    # Read the key to the Dark Sky weather API from file.
-    keyfile = os.path.join(_pkgdir, 'darkskykey.yaml')
+    # Read the key to Weather API from file.
+    keyfile = os.path.join(_pkgdir, 'apikey.yaml')
     logging.info(
-        'Reading Dark Sky API key from file \"{}\" ...'.format(keyfile))
+        'Reading Weather API key from file \"{}\" ...'.format(keyfile))
     with open(keyfile, 'r') as file:
-        _apikey = yaml.load(file.read())
+        _apikey = yaml.safe_load(file.read())
 
         # Make sure the API key is non-empty.
         if not _apikey:
             raise ValueError('Key file \"{}\" is empty. '
-                'Please provide a key to the Dark Sky weather API.'\
-                    .format(keyfile))
-    logging.info('Read Dark Sky API key \"{}\".'.format(_apikey))
+                             'Please provide a key to Weather API.'
+                             .format(keyfile))
+    logging.info('Read Weather API key \"{}\".'.format(_apikey))
 
     # Read the user's geographical location from file.
     locfile = os.path.join(_pkgdir, 'location.yaml')
     logging.info('Reading location from file \"{}\" ...'.format(locfile))
     with open(locfile, 'r') as file:
-        _loc = yaml.load(file.read())
+        _loc = yaml.safe_load(file.read())
     logging.info('Read location coordinate: {} N {} W.'.format(
         _loc['lat'], _loc['lon']))
 
@@ -164,26 +165,27 @@ def _render_image():
     draw = ImageDraw.Draw(_image)
     draw.fontmode = '1'  # Turn anti-aliasing off.
     _clockupdate = datetime.datetime.now()
-    clocktext = '{:>5}'.format(_clockupdate.strftime('%-I:%M'))
+    clocktext = '{:>5}'.format(_clockupdate.strftime('%I:%M'))
     draw.text((5, 7), clocktext, font=_fonts[0], fill=_fontcolor)
-    
+
     # Draw the temperature.
     temptext = ''
     if _temp is None:
-        logging.warning('Cannot display temperature: no information available.')
+        logging.warning(
+            'Cannot display temperature: no information available.')
     else:
         temptext = u'{:> 3.0f}°'.format(_temp)
     draw.text((4, 28), temptext, font=_fonts[1], fill=_fontcolor)
-    
+
     # Draw the precipitation probability.
     preciptext = ''
     if _precip is None:
         logging.warning('Cannot display precipitation probability: '
-            'no information available.')
+                        'no information available.')
     else:
         preciptext = '{:>4.0%}'.format(min(_precip, 0.99))
     draw.text((32, 28), preciptext, font=_fonts[1], fill=_fontcolor)
-    
+
     logging.info('Image rendered.')
 
 
@@ -194,7 +196,7 @@ def _update_background():
     global _background, _backgroundfile
 
     logging.info('Loading background image ...')
-    
+
     # Make sure the weather information is up to date.
     _update_weather()
 
@@ -203,7 +205,8 @@ def _update_background():
     imagefiles = []
     if _desc:
         descdir = os.path.join(_imagedir, _desc)
-        logging.info('Searching images in directory \"{}\" ...'.format(descdir))
+        logging.info(
+            'Searching images in directory \"{}\" ...'.format(descdir))
         if _temp:
             try:
                 for file in os.listdir(descdir):
@@ -211,13 +214,13 @@ def _update_background():
                     if os.path.isdir(tempdir):
                         temprange = [float(bound) for bound in file.split('_')]
                         if temprange[0] <= round(_temp) <= temprange[-1]:
-                            imagefiles.extend([os.path.join(tempdir, file) \
-                                for file in os.listdir(tempdir) \
-                                if os.path.splitext(file)[-1].lower() \
-                                    in _imageexts])
+                            imagefiles.extend([os.path.join(tempdir, file)
+                                               for file in os.listdir(tempdir)
+                                               if os.path.splitext(file)[-1].lower()
+                                               in _imageexts])
             except Exception as e:
                 logging.warning(e)
-        
+
         # If no image corresponds to the current temperature, search for default
         # images that correspond to the current weather description.
         if not imagefiles:
@@ -264,10 +267,64 @@ def _update_background():
             _backgroundfile = None
 
     logging.info('Background image loaded.')
-        
+
+
+def response_to_desc(response):
+    return {
+        "Sunny": "clear-day",
+        "Clear": "clear-night",
+        "Partly cloudy": "partly-cloudy-day" if response["current"]["is_day"] else "partly-cloudy-night",
+        "Cloudy": "cloudy",
+        "Overcast": "cloudy",
+        "Mist": "fog",
+        "Patchy rain possible": "rain",
+        "Patchy snow possible": "snow",
+        "Patchy sleet possible": "sleet",
+        "Patchy freezing drizzle possible": "sleet",
+        "Thundery outbreaks possible": "thunderstorm",
+        "Blowing snow": "snow",
+        "Blizzard": "snow",
+        "Fog": "fog",
+        "Freezing fog": "fog",
+        "Patchy light drizzle": "rain",
+        "Light drizzle": "rain",
+        "Freezing drizzle": "sleet",
+        "Heavy freezing drizzle": "sleet",
+        "Patchy light rain": "rain",
+        "Light rain": "rain",
+        "Moderate rain at times": "rain",
+        "Moderate rain": "rain",
+        "Heavy rain at times": "rain",
+        "Heavy rain": "rain",
+        "Light freezing rain": "sleet",
+        "Moderate or heavy freezing rain": "sleet",
+        "Light sleet": "sleet",
+        "Moderate or heavy sleet": "sleet",
+        "Patchy light snow": "snow",
+        "Light snow": "snow",
+        "Patchy moderate snow": "snow",
+        "Moderate snow": "snow",
+        "Patchy heavy snow": "snow",
+        "Heavy snow": "snow",
+        "Ice pellets": "sleet",
+        "Light rain shower": "rain",
+        "Moderate or heavy rain shower": "rain",
+        "Torrential rain shower": "thunderstorm",
+        "Light sleet showers": "sleet",
+        "Moderate or heavy sleet showers": "sleet",
+        "Light snow showers": "snow",
+        "Moderate or heavy snow showers": "snow",
+        "Light showers of ice pellets": "sleet",
+        "Moderate or heavy showers of ice pellets": "sleet",
+        "Patchy light rain with thunder": "thunderstorm",
+        "Moderate or heavy rain with thunder": "thunderstorm",
+        "Patchy light snow with thunder": "snow",
+        "Moderate or heavy snow with thunder": "snow",
+    }[response["current"]["condition"]["text"]]
+
 
 def _update_weather():
-    """Download latest weather information from Dark Sky server.
+    """Download latest weather information from Weather API server.
     """
 
     global _weatherupdate, _temp, _desc, _precip
@@ -279,10 +336,10 @@ def _update_weather():
     if _weatherupdate and now - _weatherupdate < _waittime:
         waittime = _waittime - (now - _weatherupdate)
         logging.info(
-            'Cannot call weather API in order not to exceed daily limit. '
+            'Cannot call Weather API in order not to exceed monthly limit. '
             'Time to next call {:.1f} s.'.format(waittime.total_seconds()))
         return
-    
+
     # Reset weather information.
     _weatherupdate = now
     _temp = None
@@ -298,31 +355,34 @@ def _update_weather():
     # Get the current weather.
     logging.info('Downloading weather information from server ...')
     try:
-        with darksky.forecast(
-                key=_apikey,
-                latitude=_loc['lat'],
-                longitude=_loc['lon'],
-                timeout=10,
-                units='si') as forecast:
-            # Determine the current temperature and weather description.
-            _temp = forecast.currently.temperature
-            if _desc is None:
-                _desc = forecast.icon
+        response = requests.get("https://api.weatherapi.com/v1/forecast.json", params={
+            "key": _apikey,
+            "q": "{},{}".format(_loc['lat'], _loc['lon']),  # Location.
+            "days": 2,                               # Forecast horizon.
+            "aqi": "no",                                    # Air quality data.
+            "alerts": "no"}                                 # Weather alerts.
+        ).json()
+        _temp = response["current"]["temp_c"]
+        if _desc is None:
+            _desc = response_to_desc(response)
 
-            # Determine the precipitation probability for the next couple of
-            # hours.
-            dry = 1.0
-            for hour in forecast.hourly[1:3]:
-                dry *= 1.0 - hour.precipProbability
-            _precip = 1.0 - dry
-            
-            logging.info(
-                'Successfully retrieved weather information: '
-                'description: {}, temperatue: {:.1f}°C, '
-                'precipitation: {:.0%}.'.format(_desc, _temp, _precip))
+        # Determine the precipitation probability for the next couple of
+        # hours.
+        pp_rain = [forecast_hour["chance_of_rain"] * 0.01
+                   for forecast_day in response["forecast"]["forecastday"]
+                   for forecast_hour in forecast_day["hour"]]
+        p_dry = 1.0
+        for p_rain in pp_rain[now.hour:now.hour+3]:
+            p_dry *= 1.0 - p_rain
+        _precip = 1.0 - p_dry
+
+        logging.info(
+            'Successfully retrieved weather information: '
+            'description: {}, temperatue: {:.1f}°C, '
+            'precipitation: {:.0%}.'.format(_desc, _temp, _precip))
     except Exception as e:
         logging.error('Failed to retrieve weather information: {}.'.format(e))
-    
+
     logging.info('Weather information updated.')
 
 
@@ -331,11 +391,7 @@ if __name__ == '__main__':
     """
 
     # Import required packages.
-    import duallog
     import pygame
-
-    # Set up logging.
-    duallog.setup('log/frogweather/frogweather')
 
     # Define the size of the weather station window.
     screensize = (240, 480)
@@ -354,7 +410,7 @@ if __name__ == '__main__':
         for event in pygame.event.get():
             # Exit game.
             if event.type == pygame.QUIT \
-                    or (event.type == pygame.KEYDOWN 
+                    or (event.type == pygame.KEYDOWN
                         and event.key == pygame.K_ESCAPE):
                 pygame.quit()
                 sys.exit()
