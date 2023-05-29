@@ -266,6 +266,8 @@ def _update_background():
 
 
 def response_to_desc(response):
+    """Extract a description of the current weather from the Weather API repsonse dictionary.
+    """
     return {
         "Sunny": "clear-day",
         "Clear": "clear-night",
@@ -354,7 +356,7 @@ def _update_weather():
         response = requests.get("https://api.weatherapi.com/v1/forecast.json", params={
             "key": _apikey,
             "q": "{},{}".format(_loc['lat'], _loc['lon']),  # Location.
-            "days": 2,                               # Forecast horizon.
+            "days": 2,                                      # Forecast horizon.
             "aqi": "no",                                    # Air quality data.
             "alerts": "no"}                                 # Weather alerts.
         ).json()
