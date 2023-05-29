@@ -22,25 +22,21 @@ Use this module as follows:
 5. Access the image via "frogweather.get_image()".
 """
 
-# Check Python version.
+import yaml
 import requests
+from PIL import Image, ImageDraw, ImageFont
+import time
+import random
+import os
+import logging
+import datetime
 import sys
+
+# Check Python version.
 version = sys.version_info[0]
 if not 2 <= version <= 3:
     raise Exception('Frogweather requires Python 2 or 3. '
-        'You are using Python {}.'.format(version))
-
-# Import standard packages.
-import datetime
-import logging
-import os
-import random
-import time
-
-# Import external packages.
-from PIL import Image, ImageDraw, ImageFont
-import yaml
-
+                    'You are using Python {}.'.format(version))
 
 # Initialize global variables.
 _apikey = None          # API key.
