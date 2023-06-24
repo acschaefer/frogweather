@@ -271,7 +271,7 @@ def response_to_desc(response):
     """
     return {
         "Sunny": "clear-day",
-        "Clear": "clear-night",
+        "Clear": "clear-day" if response["current"]["is_day"] else "clear-night",
         "Partly cloudy": "partly-cloudy-day" if response["current"]["is_day"] else "partly-cloudy-night",
         "Cloudy": "cloudy",
         "Overcast": "cloudy",
