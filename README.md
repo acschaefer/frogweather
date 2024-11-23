@@ -125,9 +125,9 @@ Once the hardware is set up, follow the steps below to make the software work:
    Navigate to your clone of the `rpi-rgb-led-matrix` repository and in the folder `rpi-rgb-led-matrix/bindings/python/`, run the following commands:
 
     ```shell
-    sudo apt-get update && sudo apt-get install python2.7-dev python-pillow -y
-    make build-python
-    sudo make install-python
+    sudo apt-get update && sudo apt-get install python3-dev cython3 -y
+    make build-python 
+    sudo make install-python 
     ```
 
 8. Follow the steps in the previous sectoin to install the frogweather app.
