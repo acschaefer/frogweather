@@ -24,7 +24,7 @@ First, run the example script:
 1. Install the dependencies via `pip`:
 
    ```shell
-   pip install pygame PyYAML requests
+   pip install duallog pygame PyYAML requests
    ```
 
 2. Clone the repository:
@@ -81,22 +81,33 @@ In order to generate an image, the `frogweather` module executes the following s
 In order to set up a frogweather-powered weather station consisting of a Raspberry Pi and two 64x64 LED matrices, you first need to set up the hardware.
 For detailed instructions on setting up the matrices, see the [Raspberry Pi LED matrix driver repository](https://github.com/hzeller/rpi-rgb-led-matrix). 
 If you have access to a 3D printer, you might find my [3D model of a frame for two LED matrices](https://github.com/acschaefer/3d_models/tree/master/frogweather) helpful.
-Then, perform the above steps to download and run the example script `frogweather.py`. 
-Once everything works, perform the following software engineering:
-1. Install Raspbian Lite on the Raspberry Pi.
-2. Switch off on-board sound: Change the corresponding line in the Raspbian system file `/boot/config.txt` to 
+Once the hardware is set up, follow the steps below to make the software work:
+1. Install Raspberry Pi OS Lite on the Raspberry Pi. We recommend the version "bullseye".
+   More recent versions enforce using virtual Python environments, which are harder to use with sudo privileges.
+3. Switch off on-board sound, because it does not work with the LED matrix library:
+   Change the corresponding line in the OS file `/boot/config.txt` to 
    
    ```
    dtparam=audio=off
    ```
 
-3. Disable unnecessary services: 
+   Then, blacklist the sound driver and reboot:
+   ```shell
+   cat <<EOF | sudo tee /etc/modprobe.d/blacklist-rgb-matrix.conf
+   blacklist snd_bcm2835
+   EOF    
+
+   sudo update-initramfs -u
+   sudo reboot
+   ```
+
+5. Disable unnecessary services: 
  
    ```shell
    sudo apt-get remove bluez bluez-firmware pi-bluetooth triggerhappy pigpio
    ```
 
-4. To isolate the fourth CPU from tasks scheduled by the operating system, append the following to the Raspbian system file `/boot/cmdline.txt`:
+6. To isolate the fourth CPU from tasks scheduled by the operating system, append the following to the Raspbian system file `/boot/cmdline.txt`:
 
    ```
    isolcpus=3
@@ -104,13 +115,13 @@ Once everything works, perform the following software engineering:
 
    Make sure the command above is separated by a space from the preceding commands; do not insert a line break.
 
-5. Download the excellent [Raspberry Pi LED matrix driver repository](https://github.com/hzeller/rpi-rgb-led-matrix):
+7. Download the excellent [Raspberry Pi LED matrix driver repository](https://github.com/hzeller/rpi-rgb-led-matrix):
 
    ```shell
    git clone https://github.com/hzeller/rpi-rgb-led-matrix
    ```
 
-6. Build the Python bindings of the LED matrix driver: 
+8. Build the Python bindings of the LED matrix driver: 
    Navigate to your clone of the `rpi-rgb-led-matrix` repository and in the folder `rpi-rgb-led-matrix/bindings/python/`, run the following commands:
 
     ```shell
@@ -119,7 +130,10 @@ Once everything works, perform the following software engineering:
     sudo make install-python
     ```
 
-7. Navigate to the folder `frogweather/frogweather` and launch the weather station:
+8. Follow the steps in the previous sectoin to install the frogweather app.
+   Make sure to install all dependencies with sudo privileges - we need to run the app in sudo mode for the LED matrix library to work properly.
+
+10. Navigate to the folder `frogweather/frogweather` and launch the weather station:
 
     ```shell
     sudo ./showfrog
@@ -127,7 +141,7 @@ Once everything works, perform the following software engineering:
 
     The `sudo` command is required by the LED matrix driver.
 
-8. In order to launch the weather station automatically after boot, append the following command to the Raspbian system file `/etc/rc.local`:
+11. In order to launch the weather station automatically after boot, append the following command to the Raspbian system file `/etc/rc.local`:
    
    ```shell
    sudo python /path/to/frogweather/frogweather/showfrog &
