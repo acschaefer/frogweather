@@ -130,8 +130,8 @@ Once the hardware is set up, follow the steps below to make the software work:
     sudo make install-python 
     ```
 
-8. Follow the steps in the previous sectoin to install the frogweather app.
-   Make sure to install all dependencies with sudo privileges - we need to run the app in sudo mode for the LED matrix library to work properly.
+8. Follow the steps in the previous section to install the frogweather app.
+   Make sure to install all dependencies with `sudo` privileges - we need to run the app with `sudo` for the LED matrix library to work properly.
 
 10. Navigate to the folder `frogweather/frogweather` and launch the weather station:
 
@@ -143,9 +143,9 @@ Once the hardware is set up, follow the steps below to make the software work:
 
 11. In order to launch the weather station automatically after boot, append the following command to the Raspbian system file `/etc/rc.local`:
    
-   ```shell
-   sudo python /path/to/frogweather/frogweather/showfrog &
-   ```
+    ```shell
+    sudo python /path/to/frogweather/frogweather/showfrog &
+    ```
 
 The result looks like this:
 
