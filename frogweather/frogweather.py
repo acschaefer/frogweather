@@ -40,6 +40,7 @@ if not 2 <= version <= 3:
 
 # Initialize global variables.
 _apikey = None          # API key.
+_session = None         # HTTP session used for querying the weather server.
 _loc = None             # Geographical location of the user.
 _fonts = []             # Fonts for drawing time and weather information.
 _weatherupdate = None   # Time of last weather update.
@@ -77,7 +78,7 @@ def init():
     required fonts from file.
     """
 
-    global _apikey, _loc, _fonts
+    global _apikey, _session, _loc, _fonts
 
     logging.info('Initializing frogweather module ...')
 
@@ -94,6 +95,9 @@ def init():
                              'Please provide a key to Weather API.'
                              .format(keyfile))
     logging.info('Read Weather API key \"{}\".'.format(_apikey))
+
+    # Open the HTTP session.
+    _session = requests.Session()
 
     # Read the user's geographical location from file.
     locfile = os.path.join(_pkgdir, 'location.yaml')
@@ -354,7 +358,7 @@ def _update_weather():
     # Get the current weather.
     logging.info('Downloading weather information from server ...')
     try:
-        response = requests.get("https://api.weatherapi.com/v1/forecast.json", params={
+        response = _session.get("https://api.weatherapi.com/v1/forecast.json", params={
             "key": _apikey,
             "q": "{},{}".format(_loc['lat'], _loc['lon']),  # Location.
             "days": 2,                                      # Forecast horizon.
